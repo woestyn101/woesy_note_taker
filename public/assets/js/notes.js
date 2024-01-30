@@ -13,7 +13,7 @@ clearBtn.style.display = "none";
 newBtn.style.display = "none";
 
 // Invoked by the buttonHandler function to fetch terms from the data store
-const getTerms = () =>
+const getNotes = () =>
   fetch('/notes/api', {
     method: 'GET',
   })
@@ -30,6 +30,7 @@ function clearForm(){
     
 }
 
+
 // new button click function
 newBtn.addEventListener("click", newNote);
 
@@ -45,6 +46,8 @@ function newNote(){
 // adding eventlisteners to input fields
    userTitle.addEventListener('keyup', show );
   userText.addEventListener('keyup', show );
+
+  
 
   //hiding save and clear buttons
   function show(){
@@ -72,8 +75,7 @@ function newNote(){
         textobject.push(note.title);
         textobject.push(note.text);
         textobject.push(note.id);
-        divE.appendChild(divTitle);
-               
+        divE.appendChild(divTitle);          
      
         
         
@@ -81,7 +83,49 @@ function newNote(){
         divE.addEventListener('click', viewNote);
        
             }
-   
+
+            saveBtn.addEventListener('click', saveNote);
+
+           // fuction to post new data to db.json
+      function saveNote() {
+
+        // getting data from input fields
+        var data = {
+          title: userTitle.value,
+          text: userText.value,
+        
+        };
+
+        // using fetch to post new data
+        fetch("/notes/new", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+           
+            return response.text();
+          })
+          .then((data) => {
+            console.log(data);
+                 
+          })
+          .catch((error) => {
+            console.error(
+              "There was a problem with the fetch operation:",
+              error
+            );
+          });
+
+         
+       
+       
+      }
             // function to view title and text  in form fields
      function viewNote(event){
         
@@ -105,9 +149,7 @@ function newNote(){
         
      }       
 
-     getTerms().then((response) => response.forEach((note) => renderNotes(note)));
+     getNotes().then((response) => response.forEach((note) => renderNotes(note)));
     
    // savebtn click 
-    saveBtn.addEventListener("click", saveData);
-    
     
